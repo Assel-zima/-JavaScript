@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Student Planner</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar" id="top">
+      <div class="container topbar__inner">
+        <div class="brand">
+          <span class="brand__logo">📚</span>
+          <div class="brand__text">
+            <div class="brand__name">Smart Student Planner</div>
+            <div class="brand__tag">планируй • учись • успевай</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav__link" href="#planner">Планер</a>
+          <a class="nav__link" href="#stats">Статистика</a>
+          <a class="nav__link" href="#tips">Советы</a>
+        </nav>
+
+        <div class="topbar__actions">
+          <button
+            class="btn btn--ghost"
+            id="btnTheme"
+            type="button"
+            aria-label="Сменить тему"
+          >
+            🌓
+          </button>
+          <button class="btn btn--primary" id="btnOpenModal" type="button">
+            + Добавить
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <h1 class="hero__title">Твой учебный день — под контролем</h1>
+        <p class="hero__subtitle">
+          Добавляй задачи, ставь дедлайны, отмечай выполненное и следи за
+          прогрессом.
+        </p>
+        <div class="hero__chips">
+          <span class="chip">Модалка</span>
+          <span class="chip">Валидация</span>
+          <span class="chip">LocalStorage</span>
+          <span class="chip">Сортировка</span>
+          <span class="chip">Плавный скролл</span>
+        </div>
+      </section>
+
+      <div class="slider" id="slider" aria-label="Слайдер возможностей">
+        <div class="slider__track" id="sliderTrack">
+          <div class="slide">
+            <img
+              class="slide__img"
+              src="assets/slide1.png"
+              alt="Учёба и планирование"
+            />
+            <div class="slide__overlay"></div>
+            <div class="slide__content">
+              <div class="slide__title">Управляй задачами</div>
+              <div class="slide__text">
+                Добавляй, сортируй и находи нужное за секунды.
+              </div>
+            </div>
+          </div>
+
+          <div class="slide">
+            <img
+              class="slide__img"
+              src="assets/slide2.png"
+              alt="Дедлайны и календарь"
+            />
+            <div class="slide__overlay"></div>
+            <div class="slide__content">
+              <div class="slide__title">Дедлайны под контролем</div>
+              <div class="slide__text">
+                Просрочка подсвечивается, приоритет помогает выбрать главное.
+              </div>
+            </div>
+          </div>
+
+          <div class="slide">
+            <img
+              class="slide__img"
+              src="assets/slide3.png"
+              alt="Прогресс и выполнение задач"
+            />
+            <div class="slide__overlay"></div>
+            <div class="slide__content">
+              <div class="slide__title">Прогресс и индекс продуктивности</div>
+              <div class="slide__text">
+                Закрывай задачи и собирай серию продуктивных дней.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="slider__btn slider__btn--prev"
+          id="sliderPrev"
+          type="button"
+          aria-label="Предыдущий слайд"
+        >
+          ←
+        </button>
+        <button
+          class="slider__btn slider__btn--next"
+          id="sliderNext"
+          type="button"
+          aria-label="Следующий слайд"
+        >
+          →
+        </button>
+
+        <div
+          class="slider__dots"
+          id="sliderDots"
+          aria-label="Навигация по слайдам"
+        ></div>
+      </div>
+
+      <section id="planner" class="card">
+        <div class="card__header">
+          <h2 class="card__title">Планер задач</h2>
+
+          <div class="controls">
+            <input
+              id="search"
+              class="input"
+              type="search"
+              placeholder="Поиск по задачам…"
+            />
+            <select id="filter" class="select">
+              <option value="all">Все</option>
+              <option value="active">Активные</option>
+              <option value="done">Выполненные</option>
+              <option value="overdue">Просроченные</option>
+            </select>
+            <select id="sort" class="select">
+              <option value="dateAsc">Дедлайн: ближе</option>
+              <option value="dateDesc">Дедлайн: дальше</option>
+              <option value="prioDesc">Приоритет: высокий</option>
+              <option value="prioAsc">Приоритет: низкий</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="list" id="taskList" aria-live="polite"></div>
+
+        <div class="card__footer">
+          <button class="btn btn--danger" id="btnClearDone" type="button">
+            Очистить выполненные
+          </button>
+          <button class="btn btn--ghost" id="btnResetAll" type="button">
+            Сбросить всё
+          </button>
+        </div>
+      </section>
+
+      <section id="stats" class="grid">
+        <div class="stat card">
+          <div class="stat__label">Всего задач</div>
+          <div class="stat__value" id="statTotal">0</div>
+        </div>
+        <div class="stat card">
+          <div class="stat__label">Выполнено</div>
+          <div class="stat__value" id="statDone">0</div>
+        </div>
+        <div class="stat card">
+          <div class="stat__label">Просрочено</div>
+          <div class="stat__value" id="statOverdue">0</div>
+        </div>
+        <div class="stat card">
+          <div class="stat__label">Индекс продуктивности</div>
+          <div class="stat__value" id="statStreak">0</div>
+        </div>
+      </section>
+
+      <section id="tips" class="card">
+        <h2 class="card__title">Мини-советы</h2>
+        <ul class="tips">
+          <li>
+            Ставь дедлайн даже на маленькие задачи — мозг любит конкретику.
+          </li>
+          <li>Высокий приоритет — максимум 1–3 задачи в день.</li>
+          <li>
+            Делай «разминку»: одну маленькую задачу в начале дня для импульса.
+          </li>
+        </ul>
+        <a class="backtop" href="#top">↑ Наверх</a>
+      </section>
+    </main>
+
+    <div class="modal" id="modal" aria-hidden="true">
+      <div class="modal__backdrop" id="modalBackdrop"></div>
+      <div
+        class="modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal__header">
+          <h3 id="modalTitle">Добавить задачу</h3>
+          <button
+            class="iconbtn"
+            id="btnCloseModal"
+            type="button"
+            aria-label="Закрыть"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form id="taskForm" class="form" novalidate>
+          <input type="hidden" id="taskId" name="taskId" value="" />
+
+          <label class="field">
+            <span class="field__label">Название задачи *</span>
+            <input
+              class="input"
+              id="title"
+              name="title"
+              type="text"
+              placeholder="Например: сдать лабораторную"
+            />
+            <small class="field__error" data-error-for="title"></small>
+          </label>
+
+          <label class="field">
+            <span class="field__label">Дедлайн *</span>
+            <input class="input" id="deadline" name="deadline" type="date" />
+            <small class="field__error" data-error-for="deadline"></small>
+          </label>
+
+          <label class="field">
+            <span class="field__label">Приоритет</span>
+            <select class="select" id="priority" name="priority">
+              <option value="1">Низкий</option>
+              <option value="2" selected>Средний</option>
+              <option value="3">Высокий</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="field__label">Email *</span>
+            <input
+              class="input"
+              id="email"
+              name="email"
+              type="email"
+              placeholder="student@mail.com"
+            />
+            <small class="field__error" data-error-for="email"></small>
+          </label>
+
+          <label class="field">
+            <span class="field__label">Короткое описание</span>
+            <textarea
+              class="textarea"
+              id="notes"
+              name="notes"
+              rows="3"
+              placeholder="Опционально…"
+            ></textarea>
+          </label>
+
+          <div class="form__actions">
+            <button class="btn btn--primary" type="submit">Сохранить</button>
+            <button class="btn btn--ghost" id="btnCancel" type="button">
+              Отмена
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
